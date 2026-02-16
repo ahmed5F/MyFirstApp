@@ -1,0 +1,25 @@
+name: Build IPA
+on: [workflow_dispatch] # تشغيل يدوي
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build App
+        run: |
+          mkdir -p build
+          # هنا نقوم بتحويل كود سويفت إلى تطبيق بسيط
+          swiftc App.swift -o build/MyApp -sdk $(xcrun --sdk iphoneos --show-sdk-path) -target arm64-apple-ios15.0
+          
+      - name: Create IPA Structure
+        run: |
+          mkdir -p Payload/MyApp.app
+          cp build/MyApp Payload/MyApp.app/
+          zip -r MyApp.ipa Payload
+          
+      - name: Upload Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: My-IPA-File
+          path: MyApp.ipa
