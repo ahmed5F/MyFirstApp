@@ -1,0 +1,20 @@
+name: Build IPA
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create Dummy App
+        run: |
+          mkdir -p Payload/MyApp.app
+          # صنع ملف تشغيلي وهمي للتجربة
+          echo "test" > Payload/MyApp.app/MyApp
+          zip -r MyApp.ipa Payload
+          
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: My-IPA-File
+          path: MyApp.ipa
