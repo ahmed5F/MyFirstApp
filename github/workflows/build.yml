@@ -5,19 +5,46 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4 # حدثنا النسخة هنا أيضاً
+      - uses: actions/checkout@v4
 
-      - name: Create App Structure
+      - name: Create Valid App Structure
         run: |
+          # 1. إنشاء مجلد التطبيق
           mkdir -p MyApp.app
-          echo "Main Application" > MyApp.app/MyApp
+          
+          # 2. صنع ملف تشغيلي حقيقي بسيط
+          echo "#!/bin/bash" > MyApp.app/MyApp
           chmod +x MyApp.app/MyApp
+          
+          # 3. إنشاء ملف Info.plist الضروري للتوقيع
+          cat <<EOF > MyApp.app/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>MyApp</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.ahmed.testapp</string>
+              <key>CFBundleName</key>
+              <string>AhmedApp</string>
+              <key>CFBundleVersion</key>
+              <string>1.0</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>LSRequiresIPhoneOS</key>
+              <true/>
+          </dict>
+          </plist>
+          EOF
+          
+          # 4. تجميع الـ IPA
           mkdir -p Payload
           cp -r MyApp.app Payload/
           zip -r MyApp.ipa Payload
           
       - name: Upload Result
-        uses: actions/upload-artifact@v4 # هذا هو التغيير المطلوب لحل المشكلة!
+        uses: actions/upload-artifact@v4
         with:
           name: My-IPA-File
           path: MyApp.ipa
