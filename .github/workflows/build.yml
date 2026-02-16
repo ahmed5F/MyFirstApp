@@ -5,16 +5,19 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Create Dummy App
+      - uses: actions/checkout@v4 # حدثنا النسخة هنا أيضاً
+
+      - name: Create App Structure
         run: |
-          mkdir -p Payload/MyApp.app
-          # صنع ملف تشغيلي وهمي للتجربة
-          echo "test" > Payload/MyApp.app/MyApp
+          mkdir -p MyApp.app
+          echo "Main Application" > MyApp.app/MyApp
+          chmod +x MyApp.app/MyApp
+          mkdir -p Payload
+          cp -r MyApp.app Payload/
           zip -r MyApp.ipa Payload
           
-      - name: Upload IPA
-        uses: actions/upload-artifact@v3
+      - name: Upload Result
+        uses: actions/upload-artifact@v4 # هذا هو التغيير المطلوب لحل المشكلة!
         with:
           name: My-IPA-File
           path: MyApp.ipa
